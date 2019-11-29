@@ -4,6 +4,8 @@
     运行依赖:
         cardview-v7:28.0.0(需手动安装)
          minSdkVersion 15 ==>>  minSdkVersion 21 (build.gradle文件)
+         可能需要添加的依赖(一般不用添加) com.android.support:appcompat-v7:25.3.1
+         
 
     提交记录表:
         1.2019-11-27 9:25 git初次创建提交测试

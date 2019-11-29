@@ -19,6 +19,17 @@
 
         <!--        最外层的线性布局-->
 
+<!--二代导航栏,自行设置导航栏,需将初始自带的主题设置为不带有导航栏的-->
+        <Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:title="乐程课程表"
+            android:titleTextColor="#ffffff"
+            android:background="@color/colorPrimary">
+
+        </Toolbar>
+<!--        初版导航栏-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -46,6 +57,8 @@
 
 
         </LinearLayout>
+<!--初版导航栏结束-->
+
 
         <ScrollView
             android:layout_width="match_parent"
