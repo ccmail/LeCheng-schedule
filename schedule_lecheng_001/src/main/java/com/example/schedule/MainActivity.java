@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -116,13 +117,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     //添加卡片的方法,形参col,row是从用户那边获取到的数据,初步推测应与星期几和第几节课对应
-    public void add_content(Course course){
+    public void add_content(final Course course){
         int row = course.getCourseIndex();//row对应第几节课
         int col = course.getCourseDay();//col对应周几上课
         String text = course.getCourseName()+"\n"+course.getCourseAddress()+"\n"+course.getCourseTeacher();//将课程名称,地址,教师姓名显示出来,开始上课周数暂不显示
 
         //每节课的那一个总的卡片布局放在course_card.xml文件中,这里将其绑定到变量course_card_view上
-        View course_card_view= LayoutInflater.from(this).inflate(R.layout.course_card,null);
+        final View course_card_view= LayoutInflater.from(this).inflate(R.layout.course_card,null);
 
 
         //第一列节数列占比中较小,*1,其余均为*2
@@ -140,9 +141,20 @@ public class MainActivity extends AppCompatActivity {
         //将行列号合并
         GridLayout.LayoutParams col_row_spec = new GridLayout.LayoutParams(row_spec,col_spec);
         //将设置好的card按照设定好的行列添加到gridlayout中
-
-
         this.gridLayout.addView(course_card_view,col_row_spec);
+
+        //为布置的卡片添加点击方法
+        course_card_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                click_card(course,course_card_view);
+
+
+
+            }
+        });
+
+
     }
 
     //获取屏幕分辨率的方法,借此将卡片等宽放置,长度预先设定死的,所以暂且只需要设定宽度
@@ -168,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //这个方法中缺少从editText获取值的方法,待补充,当前思路,添加时暂时先在后台逻辑直接添加到页面上,下次启动时从数据库读取时再一次性重新加载
+    //创建添加课程的弹窗,确定添加后执行插入数据库与查询数据库的操作
     public void setCourse_dialog(){
         //创建弹窗用以获取用户输入的信息
         LayoutInflater course_dialog = LayoutInflater.from(MainActivity.this);
@@ -297,5 +309,61 @@ public class MainActivity extends AppCompatActivity {
         this.gridLayout.addView(num,spec);
     }
 
+    //点击卡片调用的方法,用于弹框与删改
+    public void click_card(final Course course, final View view_delete){
+        Toast toast0 = Toast.makeText(MainActivity.this,"这里是点击卡片的测试",Toast.LENGTH_SHORT);
+        toast0.show();
+
+        LayoutInflater show_course = LayoutInflater.from(MainActivity.this);
+        final View view = show_course.inflate(R.layout.show_card,null);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("详细信息");
+        builder.setView(view);
+
+        //为了关闭AlertDialog,对其进行赋值,在下方进行调用
+        final AlertDialog closeDialog = builder.create();
+        closeDialog.show();
+
+        //若需显示额外的东西,需要前往show_card.xml文件中进行添加组件
+        //绑定show_card中的组件
+        EditText name_edit = (EditText)view.findViewById(R.id.course_name);
+        EditText teacher_edit = (EditText)view.findViewById(R.id.course_teacher);
+        EditText address_edit = (EditText)view.findViewById(R.id.course_address);
+        //获取相应的值显示在Dialog中
+        name_edit.setText(course.getCourseName());
+        teacher_edit.setText(course.getCourseTeacher());
+        address_edit.setText(course.getCourseAddress());
+
+        Button delete_button = (Button)view.findViewById(R.id.delete);
+        Button submit_button = (Button)view.findViewById(R.id.submit);
+
+        //删除课程的点击响应方法
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //此处写删除的方法
+                gridLayout.removeView(view_delete);
+                SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+                sqLiteDatabase.execSQL("delete from course where courser_name = ?",new String[]{course.getCourseName()});
+                Toast toast1 = Toast.makeText(MainActivity.this,"删除成功!",Toast.LENGTH_SHORT);
+                toast1.show();
+                //点击按钮后将dialog关闭
+                closeDialog.dismiss();
+            }
+        });
+
+        submit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //这里写插入的方法
+
+                closeDialog.dismiss();
+            }
+        });
+
+
+
+    }
 
 }
