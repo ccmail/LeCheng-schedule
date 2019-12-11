@@ -1,4 +1,4 @@
-package com.example.schedule;
+package com.example.schedule.entity;
 
 import java.io.Serializable;
 
@@ -8,14 +8,22 @@ import java.io.Serializable;
 
 public class Course implements Serializable {
 
+    //              id
+    private Integer id;
     //             课程名       教师          地址
     private String courseName,courseTeacher,courseAddress;
     //           周几       第几节      开始周            结束周        单双周
     private int courseDay,courseIndex,courseStartWeek,courseEndWeek,courseIsDouble;
 
-    public Course(){
+    public Course(){}
+
+    public Integer getId() {
+        return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getCourseName() {
         return courseName;

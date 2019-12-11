@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,10 +21,13 @@ import android.widget.Toolbar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.schedule.entity.Course;
+import com.example.schedule.service.CourseService;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/***
+/**
  *
  * 运行逻辑: 1.启动时先加载组件方法,并且查询数据库,查询数据库的时候会用到添加课程卡片的方法
  *          2.添加卡片的方法会从数据库中读取课程信息,进行循环添加
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     //创建数据库的方法
     private MyDataBaseHelper my_dataBase_helper = new MyDataBaseHelper(this, "database.db", null, 1);
-
+    CourseService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,23 +55,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setToolbar();
+        initToolbar();
         setWeek_spinner(week_spinner, week_array);
         setGridLayout(gridLayout);
         setAdd_imageButton(add_imageButton);
         getWidth();
         show_sql();
-//        add_content(1,1,"测试margin使用");
-//        add_content(2,1,"测试使用得到,以后这里由course类获取用户的输入信息");
-//        add_content(2,2,"测试使用得到,以后这里由course类获取用户的输入信息");
-//        add_content(2,3,"测试使用得到,以后这里由course类获取用户的输入信息");
 
     }
 
-    //    加载toolbar的菜单按钮等
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+    private void initToolbar() {
+        this.toolbar.inflateMenu(R.menu.add_menu);
+        this.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int menuItemId = menuItem.getItemId();
+                switch (menuItemId){
+                    case R.id.addCourse:
+                        setCourse_dialog();
+                    case R.id.removeAllCourse:
+
+                }
+
+
+                return true;
+            }
+        });
     }
 
 
@@ -139,9 +151,8 @@ public class MainActivity extends AppCompatActivity {
         course_card_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 click_card(course, course_card_view);
-
-
             }
         });
 
@@ -150,8 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     //获取屏幕分辨率的方法,借此将卡片等宽放置,长度预先设定死的,所以暂且只需要设定宽度
     public void getWidth() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        metrics = getApplicationContext().getResources().getDisplayMetrics();
+        DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
         //测试时的使用提示
@@ -172,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         //创建弹窗用以获取用户输入的信息
         LayoutInflater course_dialog = LayoutInflater.from(MainActivity.this);
         final View v1 = course_dialog.inflate(R.layout.add_course_dialog, null);
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("添加课程");
@@ -236,15 +245,16 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
         //插入字段的名字与对应的值
         sqLiteDatabase.execSQL("insert into course(courser_name,teacher,classroom,day,course_index,class_start,class_end,isDouble) values(?,?,?,?,?,?,?,?)",
-                new String[]{
+                new Object[]{
                         course.getCourseName(),
                         course.getCourseTeacher(),
                         course.getCourseAddress(),
-                        course.getCourseDay() + "",
-                        course.getCourseIndex() + "",
-                        course.getCourseStartWeek() + "",
-                        course.getCourseEndWeek() + "",
-                        course.getCourseIsDouble() + ""});
+                        course.getCourseDay(),
+                        course.getCourseIndex(),
+                        course.getCourseStartWeek(),
+                        course.getCourseEndWeek(),
+                        course.getCourseIsDouble()
+        });
         //day等字段为int类型,加上空字符串,自动转化为String类型
         //从course中获取数据
     }
@@ -260,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 tmpCourse = new Course();
+                tmpCourse.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 tmpCourse.setCourseName(cursor.getString(cursor.getColumnIndex("courser_name")));
                 tmpCourse.setCourseTeacher(cursor.getString(cursor.getColumnIndex("teacher")));
                 tmpCourse.setCourseAddress(cursor.getString(cursor.getColumnIndex("classroom")));
@@ -277,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
         //foreach,取出数组中的每一个元素
         for (Course course : courses) {
             add_content(course);
-
         }
     }
 
@@ -303,9 +313,6 @@ public class MainActivity extends AppCompatActivity {
 
     //点击卡片调用的方法,用于弹框与删改
     public void click_card(final Course course, final View view_delete) {
-        Toast toast0 = Toast.makeText(MainActivity.this, "这里是点击卡片的测试", Toast.LENGTH_SHORT);
-        toast0.show();
-
         LayoutInflater show_course = LayoutInflater.from(MainActivity.this);
         final View view = show_course.inflate(R.layout.show_card, null);
 
@@ -319,9 +326,9 @@ public class MainActivity extends AppCompatActivity {
 
         //若需显示额外的东西,需要前往show_card.xml文件中进行添加组件
         //绑定show_card中的组件
-        EditText name_edit = (EditText) view.findViewById(R.id.course_name);
-        EditText teacher_edit = (EditText) view.findViewById(R.id.course_teacher);
-        EditText address_edit = (EditText) view.findViewById(R.id.course_address);
+        final EditText name_edit = (EditText) view.findViewById(R.id.course_name);
+        final EditText teacher_edit = (EditText) view.findViewById(R.id.course_teacher);
+        final EditText address_edit = (EditText) view.findViewById(R.id.course_address);
         //获取相应的值显示在Dialog中
         name_edit.setText(course.getCourseName());
         teacher_edit.setText(course.getCourseTeacher());
@@ -337,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
                 //此处写删除的方法
                 gridLayout.removeView(view_delete);
                 SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
-                sqLiteDatabase.execSQL("delete from course where courser_name = ?", new String[]{course.getCourseName()});
+                sqLiteDatabase.execSQL("delete from course where id = ?", new Object[]{course.getId()});
                 Toast toast1 = Toast.makeText(MainActivity.this, "删除成功!", Toast.LENGTH_SHORT);
                 toast1.show();
                 //点击按钮后将dialog关闭
@@ -349,7 +356,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //这里写插入的方法
+                String newCourseName = name_edit.getText().toString();
+                String newTeacher = teacher_edit.getText().toString();
+                String newAddress = address_edit.getText().toString();
 
+                SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+                sqLiteDatabase.execSQL(
+                        "update course set courser_name = ?, teacher = ?, classroom = ? " +
+                                "where id = "+course.getId(),new Object[]{newCourseName, newTeacher, newAddress}
+                );
+                show_sql();
+                Toast toast1 = Toast.makeText(MainActivity.this, "修改成功!", Toast.LENGTH_SHORT);
+                toast1.show();
                 closeDialog.dismiss();
             }
         });

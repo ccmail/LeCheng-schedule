@@ -63,8 +63,6 @@
             android:layout_height="wrap_content">
 
             <!--            主体部分的可滚动显示的课程表-->
-
-
             <GridLayout
                 android:id="@+id/schedule"
                 android:layout_width="match_parent"
@@ -76,15 +74,15 @@
                 <!--     占位-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a0"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_row="0"
                     android:layout_column="0"
                     android:layout_columnWeight="1">
                     <!--                        作为左上角的占位格-->
                 </androidx.cardview.widget.CardView>
-                <!--    周一-->
 
+                <!--    周一-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a1"
                     android:layout_width="wrap_content"
@@ -98,7 +96,7 @@
                     <!--  显示周几的格子,此格子用于显示周一-->
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:autoSizeTextType="uniform"
@@ -258,7 +256,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_row="1"
-                    android:layout_column="0">
+                    android:layout_column="0"
+                    android:layout_marginHorizontal="10dp">
 
                     <TextView
                         android:layout_width="match_parent"

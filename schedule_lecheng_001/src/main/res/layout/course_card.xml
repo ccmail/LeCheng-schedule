@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardCornerRadius="5dp"
+    android:layout_marginBottom="5dp"
     >
 <!--
     android:foreground="?android:attr/selectableItemBackground"
@@ -15,8 +16,8 @@
 <!--卡片高度在textview中修改-->
     <TextView
         android:id="@+id/test_textview"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="500px"
+        android:layout_height="120dp"
         ></TextView>
 
 </androidx.cardview.widget.CardView>
