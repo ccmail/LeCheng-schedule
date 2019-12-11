@@ -8,19 +8,14 @@ import java.io.Serializable;
 
 public class Course implements Serializable {
 
+    //             课程名       教师          地址
     private String courseName,courseTeacher,courseAddress;
+    //           周几       第几节      开始周            结束周        单双周
     private int courseDay,courseIndex,courseStartWeek,courseEndWeek,courseIsDouble;
 
-    public Course(String courseName, String courseTeacher, String courseAddress, int courseDay, int courseIndex, int courseStartWeek, int courseEndWeek, int courseIsDouble) {
-        this.courseName = courseName;
-        this.courseTeacher = courseTeacher;
-        this.courseAddress = courseAddress;
-        this.courseDay = courseDay;
-        this.courseIndex = courseIndex;
-        this.courseStartWeek = courseStartWeek;
-        this.courseEndWeek = courseEndWeek;
-        this.courseIsDouble = courseIsDouble;
+    public Course(){
     }
+
 
     public String getCourseName() {
         return courseName;

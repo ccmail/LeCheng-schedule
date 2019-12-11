@@ -8,41 +8,41 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="620dp"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="0.495">
 
         <!--        最外层的线性布局-->
 
-<!--二代导航栏,自行设置导航栏,需将初始自带的主题设置为不带有导航栏的-->
+        <!--二代导航栏,自行设置导航栏,需将初始自带的主题设置为不带有导航栏的-->
         <Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             android:title="乐程课程表"
-            android:titleTextColor="#ffffff"
-            android:background="@color/colorPrimary">
+            android:titleTextColor="#ffffff">
 
         </Toolbar>
-<!--        初版导航栏-->
+
+        <!--        初版导航栏-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!--            上层的导航栏布局-->
+            <!--     上层的导航栏布局-->
 
             <Spinner
                 android:id="@+id/week_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
                 android:fitsSystemWindows="true"
-                >
+                android:spinnerMode="dialog">
                 <!--                导航栏的控件,选择周数-->
             </Spinner>
 
@@ -51,13 +51,11 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
 
-                android:background="@drawable/ic_add_foreground"
-                 />
-
+                android:background="@drawable/ic_add_foreground" />
 
 
         </LinearLayout>
-<!--初版导航栏结束-->
+        <!--初版导航栏结束-->
 
 
         <ScrollView
@@ -67,190 +65,188 @@
             <!--            主体部分的可滚动显示的课程表-->
 
 
-
-
-
             <GridLayout
                 android:id="@+id/schedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="8"
                 android:rowCount="8">
-                <!--                测试使用的网格布局,col与row均为初始化测试使用,初始设置为8  ,为课程数+周数-->
+                <!--   测试使用的网格布局,col与row均为初始化测试使用,初始设置为8  ,为课程数+周数-->
 
-<!--                占位-->
+                <!--     占位-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_columnWeight="1"
+                    android:layout_row="0"
                     android:layout_column="0"
-                    android:layout_row="0">
+                    android:layout_columnWeight="1">
                     <!--                        作为左上角的占位格-->
                 </androidx.cardview.widget.CardView>
-<!--                周一-->
+                <!--    周一-->
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="1"
                     android:layout_row="0"
+                    android:layout_column="1"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
-                    <!--                    显示周几的格子,此格子用于显示周一-->
+                    app:contentPadding="4dp">
+                    <!--  显示周几的格子,此格子用于显示周一-->
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周一"
                         android:autoSizeTextType="uniform"
+                        android:text="周一"
                         android:textAlignment="center">
 
                     </TextView>
 
                 </androidx.cardview.widget.CardView>
-<!--                周二-->
+                <!--                周二-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="2"
                     android:layout_row="0"
+                    android:layout_column="2"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
+                    app:contentPadding="4dp">
                     <!--                    显示周几的格子,此格子用于显示周二-->
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周二"
                         android:autoSizeTextType="uniform"
+                        android:text="周二"
                         android:textAlignment="center">
 
                     </TextView>
 
                 </androidx.cardview.widget.CardView>
-<!--                周三-->
+                <!--                周三-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="3"
                     android:layout_row="0"
+                    android:layout_column="3"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
+                    app:contentPadding="4dp">
                     <!--                    显示周几的格子,此格子用于显示周三-->
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周三"
                         android:autoSizeTextType="uniform"
+                        android:text="周三"
                         android:textAlignment="center">
 
                     </TextView>
 
                 </androidx.cardview.widget.CardView>
-<!--                周四-->
+                <!--                周四-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="4"
                     android:layout_row="0"
+                    android:layout_column="4"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
+                    app:contentPadding="4dp">
                     <!--                    显示周几的格子,此格子用于显示周四-->
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周四"
                         android:autoSizeTextType="uniform"
+                        android:text="周四"
                         android:textAlignment="center">
 
                     </TextView>
 
                 </androidx.cardview.widget.CardView>
-<!--                周五-->
+                <!--                周五-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="5"
                     android:layout_row="0"
+                    android:layout_column="5"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
+                    app:contentPadding="4dp">
                     <!--                    显示周几的格子,此格子用于显示周五-->
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周五"
                         android:autoSizeTextType="uniform"
+                        android:text="周五"
                         android:textAlignment="center">
 
                     </TextView>
 
                 </androidx.cardview.widget.CardView>
-<!--                周六-->
+                <!--                周六-->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/a6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="6"
                     android:layout_row="0"
+                    android:layout_column="6"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
+                    app:contentPadding="4dp">
                     <!--                    显示周几的格子,此格子用于显示周六-->
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周六"
                         android:autoSizeTextType="uniform"
+                        android:text="周六"
                         android:textAlignment="center">
 
                     </TextView>
 
                 </androidx.cardview.widget.CardView>
-<!--                周日-->
-                 <androidx.cardview.widget.CardView
+                <!--                周日-->
+                <androidx.cardview.widget.CardView
                     android:id="@+id/a7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnWeight="2"
-                    android:layout_column="7"
                     android:layout_row="0"
+                    android:layout_column="7"
+                    android:layout_columnWeight="2"
+                    android:layout_margin="10px"
                     app:cardCornerRadius="15px"
-                    app:contentPadding="4dp"
-                    android:layout_margin="10px">
+                    app:contentPadding="4dp">
                     <!--                    显示周几的格子,此格子用于显示周日-->
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="周日"
                         android:autoSizeTextType="uniform"
+                        android:text="周日"
                         android:textAlignment="center">
 
                     </TextView>
@@ -261,7 +257,8 @@
                     android:id="@+id/b0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    >
+                    android:layout_row="1"
+                    android:layout_column="0">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -272,10 +269,7 @@
                 </androidx.cardview.widget.CardView>
 
 
-
             </GridLayout>
-
-
 
 
         </ScrollView>
