@@ -46,13 +46,6 @@
                 <!--                导航栏的控件,选择周数-->
             </Spinner>
 
-            <ImageButton
-                android:id="@+id/add_image"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-
-                android:background="@drawable/ic_add_foreground" />
-
 
         </LinearLayout>
         <!--初版导航栏结束-->

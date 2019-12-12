@@ -12,7 +12,6 @@
     app:cardBackgroundColor="#7feacdd1"
     颜色调试
     -->
-
 <!--卡片高度在textview中修改-->
     <TextView
         android:id="@+id/test_textview"

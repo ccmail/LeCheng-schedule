@@ -23,17 +23,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.schedule.entity.Course;
 import com.example.schedule.service.CourseService;
+import com.example.schedule.serviceImpl.CourseServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * 运行逻辑: 1.启动时先加载组件方法,并且查询数据库,查询数据库的时候会用到添加课程卡片的方法
- *          2.添加卡片的方法会从数据库中读取课程信息,进行循环添加
- *          3.点击添加的图片按钮时,弹出输入课程信息的dialog,点击dialog 的确定按钮时,获取输入的信息,并从course类中走一遍插入数据库中
- *          4.第3步插入数据库之后,立刻重新执行数据库的查询,并且插入卡片
- *          备注:添加卡片的方法在查询数据库的方法中被调用
+ * 2.添加卡片的方法会从数据库中读取课程信息,进行循环添加
+ * 3.点击添加的图片按钮时,弹出输入课程信息的dialog,点击dialog 的确定按钮时,获取输入的信息,并从course类中走一遍插入数据库中
+ * 4.第3步插入数据库之后,立刻重新执行数据库的查询,并且插入卡片
+ * 备注:添加卡片的方法在查询数据库的方法中被调用
  */
 
 
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     //创建数据库的方法
     private MyDataBaseHelper my_dataBase_helper = new MyDataBaseHelper(this, "database.db", null, 1);
+    SQLiteDatabase sqLiteDatabase;
     CourseService service;
 
     @Override
@@ -54,39 +55,59 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setToolbar();
+
         initToolbar();
         setWeek_spinner(week_spinner, week_array);
         setGridLayout(gridLayout);
-        setAdd_imageButton(add_imageButton);
         getWidth();
         show_sql();
 
     }
 
     private void initToolbar() {
+        this.toolbar = (Toolbar) findViewById(R.id.toolbar);
         this.toolbar.inflateMenu(R.menu.add_menu);
         this.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int menuItemId = menuItem.getItemId();
-                switch (menuItemId){
+                System.out.println();
+                switch (menuItemId) {
                     case R.id.addCourse:
                         setCourse_dialog();
+                        break;
                     case R.id.removeAllCourse:
-
+                        removeAllCourses();
+                        break;
                 }
-
-
                 return true;
             }
         });
     }
 
 
+    public void removeAllCourseCards() {
+        for (int i = 1; i < 8; i++) {
+            for (int j = 1; j < 9; j++) {
+
+            }
+        }
+    }
+    public void removeAllCourses(){
+
+        sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+        service = new CourseServiceImpl(sqLiteDatabase);
+        service.removeAllCourses();
+        show_sql();
+        //提示信息
+        Toast toast = Toast.makeText(MainActivity.this, "删除全部课程", Toast.LENGTH_SHORT);
+        toast.show();
+
+    }
+
     //控制各组件的方法
 
-    //设置sinner的方法,绑定数组
+    //设置spinner的方法,绑定数组
     public void setWeek_spinner(Spinner week_spinner, ArrayAdapter week_array) {
         week_spinner = (Spinner) findViewById(R.id.week_count);
         week_array = ArrayAdapter.createFromResource(this, R.array.weeks, R.layout.support_simple_spinner_dropdown_item);
@@ -95,21 +116,6 @@ public class MainActivity extends AppCompatActivity {
         this.week_spinner = week_spinner;
     }
 
-    //设置图片按钮的方法,随着后期开发,该方法可能会被替换
-    public void setAdd_imageButton(ImageButton add_imageButton) {
-        add_imageButton = (ImageButton) findViewById(R.id.add_image);
-        add_imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast toast = Toast.makeText(MainActivity.this, "测试消息", Toast.LENGTH_SHORT);
-                toast.show();
-                setCourse_dialog();
-
-            }
-        });
-
-        this.add_imageButton = add_imageButton;
-    }
 
     //绑定gridLayout布局
     public void setGridLayout(GridLayout gridLayout) {
@@ -151,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
         course_card_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 click_card(course, course_card_view);
             }
         });
@@ -177,6 +182,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
     }
 
+
+
+
     //创建添加课程的弹窗,确定添加后执行插入数据库与查询数据库的操作
     public void setCourse_dialog() {
         //创建弹窗用以获取用户输入的信息
@@ -186,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("添加课程");
         builder.setView(v1);
-        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("添加", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //绑定输入框
@@ -237,59 +245,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //插入数据库的方法
+    //添加课程
     public void Insert_sql(Course course) {
-        Toast toast = Toast.makeText(MainActivity.this, "测试啊这是测试", Toast.LENGTH_SHORT);
-        toast.show();
         //获取mydatabasehelper数据库连接类中的插入值或创建数据库的方法
-        SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
-        //插入字段的名字与对应的值
-        sqLiteDatabase.execSQL("insert into course(courser_name,teacher,classroom,day,course_index,class_start,class_end,isDouble) values(?,?,?,?,?,?,?,?)",
-                new Object[]{
-                        course.getCourseName(),
-                        course.getCourseTeacher(),
-                        course.getCourseAddress(),
-                        course.getCourseDay(),
-                        course.getCourseIndex(),
-                        course.getCourseStartWeek(),
-                        course.getCourseEndWeek(),
-                        course.getCourseIsDouble()
-        });
-        //day等字段为int类型,加上空字符串,自动转化为String类型
-        //从course中获取数据
+        sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+        //调用service接口并插入课程
+        service = new CourseServiceImpl(sqLiteDatabase);
+        service.insertCourse(course);
     }
 
-    //从数据库查询的方法
-    public void show_sql() {
-        //将数据库中的数据存到数组
-        List<Course> courses = new ArrayList<Course>();
-        SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
-        //移动数据库的游标
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from course", null);
-        Course tmpCourse;
-        if (cursor.moveToFirst()) {
-            do {
-                tmpCourse = new Course();
-                tmpCourse.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                tmpCourse.setCourseName(cursor.getString(cursor.getColumnIndex("courser_name")));
-                tmpCourse.setCourseTeacher(cursor.getString(cursor.getColumnIndex("teacher")));
-                tmpCourse.setCourseAddress(cursor.getString(cursor.getColumnIndex("classroom")));
-                tmpCourse.setCourseDay(cursor.getInt(cursor.getColumnIndex("day")));
-                tmpCourse.setCourseIndex(cursor.getInt(cursor.getColumnIndex("course_index")));
-                tmpCourse.setCourseStartWeek(cursor.getInt(cursor.getColumnIndex("class_start")));
-                tmpCourse.setCourseEndWeek(cursor.getInt(cursor.getColumnIndex("class_end")));
-                tmpCourse.setCourseIsDouble(cursor.getInt(cursor.getColumnIndex("isDouble")));
-                courses.add(tmpCourse);
-
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-
-        //foreach,取出数组中的每一个元素
-        for (Course course : courses) {
-            add_content(course);
-        }
-    }
 
     //添加左侧课程数目的方法,需修改
     public void lessonNum(int lesson_num) {
@@ -311,13 +275,27 @@ public class MainActivity extends AppCompatActivity {
         this.gridLayout.addView(num, spec);
     }
 
+    //从数据库查询的方法
+    public void show_sql() {
+        //获取数据库连接并调用service接口
+        sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+        service = new CourseServiceImpl(sqLiteDatabase);
+        //获取course列表
+        List<Course> courses= service.getAllCourses();
+        //foreach,取出数组中的每一个元素
+        for (Course course : courses) {
+            //在activity上进行添加课程
+            add_content(course);
+        }
+    }
+
     //点击卡片调用的方法,用于弹框与删改
     public void click_card(final Course course, final View view_delete) {
         LayoutInflater show_course = LayoutInflater.from(MainActivity.this);
         final View view = show_course.inflate(R.layout.show_card, null);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("详细信息");
+        builder.setTitle("课程信息");
         builder.setView(view);
 
         //为了关闭AlertDialog,对其进行赋值,在下方进行调用
@@ -341,12 +319,15 @@ public class MainActivity extends AppCompatActivity {
         delete_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //此处写删除的方法
+                //删除表格布局上的view
                 gridLayout.removeView(view_delete);
-                SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
-                sqLiteDatabase.execSQL("delete from course where id = ?", new Object[]{course.getId()});
-                Toast toast1 = Toast.makeText(MainActivity.this, "删除成功!", Toast.LENGTH_SHORT);
-                toast1.show();
+                //删除数据库中的课程
+                sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+                service = new CourseServiceImpl(sqLiteDatabase);
+                service.removeCourse(course);
+
+                Toast toast = Toast.makeText(MainActivity.this, "删除成功!", Toast.LENGTH_SHORT);
+                toast.show();
                 //点击按钮后将dialog关闭
                 closeDialog.dismiss();
             }
@@ -359,19 +340,22 @@ public class MainActivity extends AppCompatActivity {
                 String newCourseName = name_edit.getText().toString();
                 String newTeacher = teacher_edit.getText().toString();
                 String newAddress = address_edit.getText().toString();
+                gridLayout.removeView(view_delete);
 
-                SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
-                sqLiteDatabase.execSQL(
-                        "update course set courser_name = ?, teacher = ?, classroom = ? " +
-                                "where id = "+course.getId(),new Object[]{newCourseName, newTeacher, newAddress}
-                );
-                show_sql();
-                Toast toast1 = Toast.makeText(MainActivity.this, "修改成功!", Toast.LENGTH_SHORT);
-                toast1.show();
+                sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+                service = new CourseServiceImpl(sqLiteDatabase);
+                service.updateCourse(course,newCourseName,newTeacher,newAddress);
+                //这部分暂时这样写
+                course.setCourseName(newCourseName);
+                course.setCourseTeacher(newTeacher);
+                course.setCourseAddress(newAddress);
+                add_content(course);
+                //提示信息
+                Toast toast = Toast.makeText(MainActivity.this, "修改成功!", Toast.LENGTH_SHORT);
+                toast.show();
                 closeDialog.dismiss();
             }
         });
-
 
     }
 

@@ -11,13 +11,10 @@ import java.util.List;
 
 public class CourseServiceImpl implements CourseService {
 
-    SQLiteDatabase sqLiteDatabase;
-
+    CourseDao courseDao;
     public CourseServiceImpl(SQLiteDatabase sqLiteDatabase) {
-        this.sqLiteDatabase = sqLiteDatabase;
+        courseDao = new CourseDaoImpl(sqLiteDatabase);
     }
-
-    CourseDao courseDao = new CourseDaoImpl(sqLiteDatabase);
 
     @Override
     public void insertCourse(Course course) {

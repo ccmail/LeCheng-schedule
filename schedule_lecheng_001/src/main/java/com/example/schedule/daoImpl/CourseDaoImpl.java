@@ -12,8 +12,8 @@ import java.util.List;
 public class CourseDaoImpl implements CourseDao {
     //数据库连接
     SQLiteDatabase sqLiteDatabase;
-    //实例化时设置数据库连接
-    public CourseDaoImpl(SQLiteDatabase sqLiteDatabase){
+
+    public CourseDaoImpl(SQLiteDatabase sqLiteDatabase) {
         this.sqLiteDatabase = sqLiteDatabase;
     }
 
@@ -32,15 +32,19 @@ public class CourseDaoImpl implements CourseDao {
                         course.getCourseIsDouble()
                 }
         );
+        //关闭资源
         sqLiteDatabase.close();
     }
 
+    /*
+    修改课程 需要修改 将前端的修改变成全部的信息，然后参数改为oldcourse和newcourse
+     */
     @Override
-    public void updateCourse(Course course,String newCourseName,String newTeacher, String newAddress) {
+    public void updateCourse(Course course, String newCourseName, String newTeacher, String newAddress) {
 
         sqLiteDatabase.execSQL(
                 "update course set courser_name = ?, teacher = ?, classroom = ? " +
-                        "where id = "+course.getId(),
+                        "where id = " + course.getId(),
                 new Object[]{newCourseName, newTeacher, newAddress}
         );
         sqLiteDatabase.close();
@@ -57,14 +61,17 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public void removeAllCourses() {
+        //清空表
         sqLiteDatabase.execSQL("delete from course");
+        //还原id
+        sqLiteDatabase.execSQL("update sqlite_sequence set seq=0 where name='course'");
         sqLiteDatabase.close();
     }
 
     @Override
     public List<Course> getAllCourses() {
 
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from course",null);
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from course", null);
         Course tmpCourse;
         List<Course> courses = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -84,5 +91,4 @@ public class CourseDaoImpl implements CourseDao {
         sqLiteDatabase.close();
         return courses;
     }
-
 }
