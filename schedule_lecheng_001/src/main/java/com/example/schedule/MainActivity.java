@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(MainActivity.this, "删除全部课程", Toast.LENGTH_SHORT);
         toast.show();
 
+        overWrite_empty(1,1);
     }
 
     //控制各组件的方法
@@ -354,6 +355,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    //用于添加单个的空白textview的方法,用于覆盖原先的表格卡片
+    public void overWrite_empty(int x,int y){
+        /***
+         * 方法思路:
+         * 1.先创建一个想要添加的组件的layout的xml文件
+         * 2.获取那个文件的(View view变量,inflate方法)
+         * 3.控制大小这一块是我没有理解的一块,没弄明白layout的xml里match和wrap宽高是怎么判定的,所以宽高这部分我暂时时使用人为设置定死的宽高的方式来做的
+         * 4.获取x,y坐标变量(gridLayout.LayoutParams将x,y变量封装到一起)
+         * 5.添加到gridlayout中(其他布局也可以使用addview,不过具体的位置需要查看他们已经写好的方法)
+         */
+        //获取到创建的空白textview组件(overwrite_empty.xml中)
+        View view = LayoutInflater.from(this).inflate(R.layout.overwrite_empty,null);
+
+        //一下关于设置textview长宽的内容均为推测,暂无法确定match是否能仅填满单个表格块的大小,若有更详细的认知,可将以下几行代码注释掉
+        int card_width = (this.width / 15) * 2 - 20;
+        TextView empty_text = (TextView)view.findViewById(R.id.empty);
+            //为其设置宽度,权宜之计
+        empty_text.getLayoutParams().width = card_width;
+        //设置宽度大小的方法结束
+
+        //设置具体的坐标位置,(添加到gridLayout上的坐标位置)
+        GridLayout.Spec x_spec = GridLayout.spec(x, 1, 1.0f);
+        GridLayout.Spec y_spec = GridLayout.spec(y, 1, 1.0f);
+        GridLayout.LayoutParams xy = new GridLayout.LayoutParams(x_spec,y_spec);
+        //添加道gridLayout中,view为show_card整个页面,xy为具体的坐标
+        this.gridLayout.addView(view,xy);
     }
 
 }
