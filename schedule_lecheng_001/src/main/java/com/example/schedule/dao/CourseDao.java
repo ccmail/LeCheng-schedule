@@ -14,5 +14,5 @@ public interface CourseDao {
 
     public void removeAllCourses();
 
-    public List<Course> getAllCourses();
+    public List<Course> getAllCourses(int week);
 }

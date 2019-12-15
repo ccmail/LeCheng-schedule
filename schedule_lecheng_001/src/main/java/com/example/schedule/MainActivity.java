@@ -43,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter week_array;
     private GridLayout gridLayout;
     private ImageButton add_imageButton;
-    private int width, height;
+    private int width;
+    private int week = 1;
+
     private Toolbar toolbar;
     //创建数据库的方法
     private MyDataBaseHelper my_dataBase_helper = new MyDataBaseHelper(this, "database.db", null, 1);
@@ -54,13 +56,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        
         initToolbar();
         setWeek_spinner(week_spinner, week_array);
         setGridLayout(gridLayout);
         getWidth();
-        show_sql();
+        showAllCourses(week);
 
     }
 
@@ -93,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void removeAllCourses(){
 
+    public void removeAllCourses(){
         sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
         service = new CourseServiceImpl(sqLiteDatabase);
         service.removeAllCourses();
-        show_sql();
+//        showAllCourses(week);
         //提示信息
         Toast toast = Toast.makeText(MainActivity.this, "删除全部课程", Toast.LENGTH_SHORT);
         toast.show();
@@ -112,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         week_spinner = (Spinner) findViewById(R.id.week_count);
         week_array = ArrayAdapter.createFromResource(this, R.array.weeks, R.layout.support_simple_spinner_dropdown_item);
         week_spinner.setAdapter(week_array);
-
         this.week_spinner = week_spinner;
     }
 
@@ -174,15 +174,12 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(MainActivity.this, a_width, Toast.LENGTH_SHORT);
         toast.show();
         this.width = width;
-        this.height = height;
     }
 
     //设置toolbar的方法,不会写,放弃了,预计将spinner(选择当前周)放在左边标题旁边,加号图标按钮放在最右边
     public void setToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
     }
-
-
 
 
     //创建添加课程的弹窗,确定添加后执行插入数据库与查询数据库的操作
@@ -228,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 //这里应该调用插入到数据库的方法,并且也应让其显示出来
                 Insert_sql(insert_course);
                 //应该有一个重新从数据库中检索数据的方法
-                show_sql();
+                showAllCourses(week);
             }
         });
         //添加取消按钮
@@ -276,12 +273,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //从数据库查询的方法
-    public void show_sql() {
+    public void showAllCourses(int week) {
         //获取数据库连接并调用service接口
         sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
         service = new CourseServiceImpl(sqLiteDatabase);
         //获取course列表
-        List<Course> courses= service.getAllCourses();
+        List<Course> courses= service.getAllCourses(week);
         //foreach,取出数组中的每一个元素
         for (Course course : courses) {
             //在activity上进行添加课程

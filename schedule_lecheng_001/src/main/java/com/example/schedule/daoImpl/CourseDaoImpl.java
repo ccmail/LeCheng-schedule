@@ -69,9 +69,11 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    public List<Course> getAllCourses() {
-
-        Cursor cursor = sqLiteDatabase.rawQuery("select * from course", null);
+    public List<Course> getAllCourses(int week) {
+        //判断所选周是单周还是双周 为双周则查询0|2的课程 为单周则查询0|1的课程
+        week = week%2==0?2:1;
+        //查询结果集
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from course where isDouble=0 or isDouble="+week, null);
         Course tmpCourse;
         List<Course> courses = new ArrayList<>();
         while (cursor.moveToNext()) {

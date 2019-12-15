@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--最外层的线性布局-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,16 +18,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.495">
 
-        <!--        最外层的线性布局-->
-
         <!--二代导航栏,自行设置导航栏,需将初始自带的主题设置为不带有导航栏的-->
         <Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
+            android:popupTheme="@style/ToolBarPopupTheme"
             android:title="乐程课程表"
-            android:titleTextColor="#ffffff">
+            android:titleTextColor="#FFFFFF">
+
+            <!--导航栏的控件,选择周数-->
+            <Spinner
+                android:id="@+id/week_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                android:spinnerMode="dialog"></Spinner>
 
         </Toolbar>
 
@@ -34,17 +42,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <!--     上层的导航栏布局-->
-
-            <Spinner
-                android:id="@+id/week_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
-                android:spinnerMode="dialog">
-                <!--                导航栏的控件,选择周数-->
-            </Spinner>
 
 
         </LinearLayout>
