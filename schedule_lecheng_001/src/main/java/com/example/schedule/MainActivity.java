@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(MainActivity.this, "删除全部课程", Toast.LENGTH_SHORT);
         toast.show();
 
+        overWrite_empty(1,1);
     }
 
     //控制各组件的方法
