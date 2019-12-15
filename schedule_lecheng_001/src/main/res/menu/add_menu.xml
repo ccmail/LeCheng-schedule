@@ -3,17 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-
-
     <item
-        android:id="@+id/media_route_menu_item"
-        android:title="Cast"
+        android:id="@+id/addCourse"
+        android:title="添加课程"
         app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"
         tools:icon="@drawable/ic_add_foreground"
         />
     <item
-        android:id="@+id/test2"
+        android:id="@+id/removeAllCourse"
         android:icon="@mipmap/ic_add"
-        android:title="测试"
+        android:title="删除全部课程"
         app:showAsAction="always"></item>
 </menu>
