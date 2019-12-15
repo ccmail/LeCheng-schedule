@@ -257,6 +257,11 @@ public class MainActivity extends AppCompatActivity {
         //从course中获取数据
     }
 
+//    public void Update_sql(Course course){
+//        SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
+//        sqLiteDatabase.execSQL("update ");
+//    }
+
     //从数据库查询的方法
     public void show_sql(){
         //将数据库中的数据存到数组
@@ -320,10 +325,11 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("详细信息");
         builder.setView(view);
-
+//        builder.create().show();
         //为了关闭AlertDialog,对其进行赋值,在下方进行调用
         final AlertDialog closeDialog = builder.create();
         closeDialog.show();
+
 
         //若需显示额外的东西,需要前往show_card.xml文件中进行添加组件
         //绑定show_card中的组件
@@ -344,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //此处写删除的方法
                 gridLayout.removeView(view_delete);
+//                gridLayout.removeAllViews();
                 SQLiteDatabase sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
                 sqLiteDatabase.execSQL("delete from course where courser_name = ?",new String[]{course.getCourseName()});
                 Toast toast1 = Toast.makeText(MainActivity.this,"删除成功!",Toast.LENGTH_SHORT);
@@ -361,8 +368,9 @@ public class MainActivity extends AppCompatActivity {
                 closeDialog.dismiss();
             }
         });
+    }
 
-
+    public void all_delete(){
 
     }
 
