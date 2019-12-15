@@ -1,13 +1,13 @@
 package com.example.schedule;
 
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +25,6 @@ import com.example.schedule.entity.Course;
 import com.example.schedule.service.CourseService;
 import com.example.schedule.serviceImpl.CourseServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,8 +34,6 @@ import java.util.List;
  * 4.第3步插入数据库之后,立刻重新执行数据库的查询,并且插入卡片
  * 备注:添加卡片的方法在查询数据库的方法中被调用
  */
-
-
 public class MainActivity extends AppCompatActivity {
     //定义的全局变量
     private Spinner week_spinner;
@@ -61,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setWeek_spinner(week_spinner, week_array);
         setGridLayout(gridLayout);
         getWidth();
-        showAllCourses(week);
+//        showAllCourses(week);
 
     }
 
@@ -88,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void removeAllCourseCards() {
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i < 2; i++) {
             for (int j = 1; j < 9; j++) {
-
+                overWrite_empty(i,j);
             }
         }
     }
@@ -99,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
         service = new CourseServiceImpl(sqLiteDatabase);
         service.removeAllCourses();
-//        showAllCourses(week);
+        //showAllCourses(week);
         //提示信息
         Toast toast = Toast.makeText(MainActivity.this, "删除全部课程", Toast.LENGTH_SHORT);
         toast.show();
@@ -114,6 +111,22 @@ public class MainActivity extends AppCompatActivity {
         week_spinner = (Spinner) findViewById(R.id.week_count);
         week_array = ArrayAdapter.createFromResource(this, R.array.weeks, R.layout.support_simple_spinner_dropdown_item);
         week_spinner.setAdapter(week_array);
+        //添加监听器 让选中第几周就显示那一周的课程
+        week_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                //提示第几周
+                Toast toast = Toast.makeText(MainActivity.this, "第"+(++i)+"周", Toast.LENGTH_SHORT);
+                toast.show();
+                //删除当前课表并更新
+                //removeAllCourseCards();
+                showAllCourses(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
         this.week_spinner = week_spinner;
     }
 
@@ -153,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         GridLayout.LayoutParams col_row_spec = new GridLayout.LayoutParams(row_spec, col_spec);
         //将设置好的card按照设定好的行列添加到gridlayout中
         this.gridLayout.addView(course_card_view, col_row_spec);
-
         //为布置的卡片添加点击方法
         course_card_view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
                 click_card(course, course_card_view);
             }
         });
-
-
     }
 
     //获取屏幕分辨率的方法,借此将卡片等宽放置,长度预先设定死的,所以暂且只需要设定宽度
@@ -176,12 +186,6 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
         this.width = width;
     }
-
-    //设置toolbar的方法,不会写,放弃了,预计将spinner(选择当前周)放在左边标题旁边,加号图标按钮放在最右边
-    public void setToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-    }
-
 
     //创建添加课程的弹窗,确定添加后执行插入数据库与查询数据库的操作
     public void setCourse_dialog() {
@@ -251,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
         service = new CourseServiceImpl(sqLiteDatabase);
         service.insertCourse(course);
     }
-
 
     //添加左侧课程数目的方法,需修改
     public void lessonNum(int lesson_num) {
@@ -359,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
 
     //用于添加单个的空白textview的方法,用于覆盖原先的表格卡片
     public void overWrite_empty(int x,int y){
-        /***
+        /**
          * 方法思路:
          * 1.先创建一个想要添加的组件的layout的xml文件
          * 2.获取那个文件的(View view变量,inflate方法)
@@ -373,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
         //一下关于设置textview长宽的内容均为推测,暂无法确定match是否能仅填满单个表格块的大小,若有更详细的认知,可将以下几行代码注释掉
         int card_width = (this.width / 15) * 2 - 20;
         TextView empty_text = (TextView)view.findViewById(R.id.empty);
-            //为其设置宽度,权宜之计
+        //为其设置宽度,权宜之计
         empty_text.getLayoutParams().width = card_width;
         //设置宽度大小的方法结束
 
