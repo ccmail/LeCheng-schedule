@@ -1,7 +1,5 @@
 乐程课程表
     
-    
-    
     运行逻辑:
         1.启动时先加载组件方法,并且查询数据库,查询数据库的时候会用到添加课程卡片的方法
         2.添加卡片的方法会从数据库中读取课程信息,进行循环添加
@@ -30,5 +28,8 @@
         SQLiteDatabase之execSQL()和rawQuery() https://blog.csdn.net/u014167212/article/details/38663825
         Android Cursor 的使用细节 https://blog.csdn.net/zhw0596/article/details/80973268
         
-        
-       
+
+    现在问题：
+        给week添加监听器（完成）
+        实现删除7天8节课 （实现）
+        现在尝试添加课程数 暂定为8个 要完成删除 删除view的方法把节数给删除了 直接删除除前16个的所有view

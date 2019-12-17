@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        initToolbar();
-        setWeek_spinner(week_spinner, week_array);
-        setGridLayout(gridLayout);
+
         getWidth();
+        initToolbar();
+        setGridLayout(gridLayout);
+        setWeek_spinner(week_spinner, week_array);
 //        showAllCourses(week);
 
     }
@@ -83,29 +83,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    //删除所有课程的cards
     public void removeAllCourseCards() {
-        for (int i = 1; i < 2; i++) {
-            for (int j = 1; j < 9; j++) {
-                overWrite_empty(i,j);
+        //因为gridlayout继承了viewgroup，view在里面的存储方式是一维数组children形式
+        //而且删除前面的后面的会顶上来，同一个位置的view下标也不同，所以无法通过计算start和count来进行删除
+        //但是前16个（占位、周几、课程数）在children中的位置是始终不变的
+        // 我们就是要保留这16个view然后删除其他所有view，所以从16开始，删除count-16的剩下的所有view，就可以了
+        gridLayout.removeViewsInLayout(16, gridLayout.getChildCount()-16);
+        //实现背景填充view，以便删除view的时候不会报错
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 8; j++) {
+                overWrite_empty(i, j);
             }
         }
     }
 
-    public void removeAllCourses(){
+    public void removeAllCourses() {
+        removeAllCourseCards();
         sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
         service = new CourseServiceImpl(sqLiteDatabase);
         service.removeAllCourses();
-        //showAllCourses(week);
         //提示信息
         Toast toast = Toast.makeText(MainActivity.this, "删除全部课程", Toast.LENGTH_SHORT);
         toast.show();
 
-        overWrite_empty(1,1);
     }
 
     //控制各组件的方法
-
     //设置spinner的方法,绑定数组
     public void setWeek_spinner(Spinner week_spinner, ArrayAdapter week_array) {
         week_spinner = (Spinner) findViewById(R.id.week_count);
@@ -116,13 +120,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 //提示第几周
-                Toast toast = Toast.makeText(MainActivity.this, "第"+(++i)+"周", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(MainActivity.this, "第" + (++i) + "周", Toast.LENGTH_SHORT);
                 toast.show();
                 //删除当前课表并更新
-                //removeAllCourseCards();
+                removeAllCourseCards();
                 showAllCourses(i);
             }
 
+            //没有选东西的时候什么也不执行
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
@@ -135,6 +140,12 @@ public class MainActivity extends AppCompatActivity {
     public void setGridLayout(GridLayout gridLayout) {
         gridLayout = (GridLayout) findViewById(R.id.schedule);
         this.gridLayout = gridLayout;
+        //实现背景填充view，以便删除的时候方便删除
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 8; j++) {
+                overWrite_empty(i, j);
+            }
+        }
         //测试使用的提示信息
         Toast toast = Toast.makeText(MainActivity.this, "gridLayout绑定成功", Toast.LENGTH_SHORT);
         toast.show();
@@ -282,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
         sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
         service = new CourseServiceImpl(sqLiteDatabase);
         //获取course列表
-        List<Course> courses= service.getAllCourses(week);
+        List<Course> courses = service.getAllCourses(week);
         //foreach,取出数组中的每一个元素
         for (Course course : courses) {
             //在activity上进行添加课程
@@ -322,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //删除表格布局上的view
                 gridLayout.removeView(view_delete);
+                overWrite_empty(course.getCourseIndex(),course.getCourseDay());
                 //删除数据库中的课程
                 sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
                 service = new CourseServiceImpl(sqLiteDatabase);
@@ -345,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
 
                 sqLiteDatabase = my_dataBase_helper.getWritableDatabase();
                 service = new CourseServiceImpl(sqLiteDatabase);
-                service.updateCourse(course,newCourseName,newTeacher,newAddress);
+                service.updateCourse(course, newCourseName, newTeacher, newAddress);
                 //这部分暂时这样写
                 course.setCourseName(newCourseName);
                 course.setCourseTeacher(newTeacher);
@@ -361,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //用于添加单个的空白textview的方法,用于覆盖原先的表格卡片
-    public void overWrite_empty(int x,int y){
+    public void overWrite_empty(int x, int y) {
         /**
          * 方法思路:
          * 1.先创建一个想要添加的组件的layout的xml文件
@@ -371,11 +383,11 @@ public class MainActivity extends AppCompatActivity {
          * 5.添加到gridlayout中(其他布局也可以使用addview,不过具体的位置需要查看他们已经写好的方法)
          */
         //获取到创建的空白textview组件(overwrite_empty.xml中)
-        View view = LayoutInflater.from(this).inflate(R.layout.overwrite_empty,null);
+        View view = LayoutInflater.from(this).inflate(R.layout.overwrite_empty, null);
 
         //一下关于设置textview长宽的内容均为推测,暂无法确定match是否能仅填满单个表格块的大小,若有更详细的认知,可将以下几行代码注释掉
         int card_width = (this.width / 15) * 2 - 20;
-        TextView empty_text = (TextView)view.findViewById(R.id.empty);
+        TextView empty_text = (TextView) view.findViewById(R.id.empty);
         //为其设置宽度,权宜之计
         empty_text.getLayoutParams().width = card_width;
         //设置宽度大小的方法结束
@@ -383,9 +395,9 @@ public class MainActivity extends AppCompatActivity {
         //设置具体的坐标位置,(添加到gridLayout上的坐标位置)
         GridLayout.Spec x_spec = GridLayout.spec(x, 1, 1.0f);
         GridLayout.Spec y_spec = GridLayout.spec(y, 1, 1.0f);
-        GridLayout.LayoutParams xy = new GridLayout.LayoutParams(x_spec,y_spec);
+        GridLayout.LayoutParams xy = new GridLayout.LayoutParams(x_spec, y_spec);
         //添加道gridLayout中,view为show_card整个页面,xy为具体的坐标
-        this.gridLayout.addView(view,xy);
+        this.gridLayout.addView(view, xy);
     }
 
 }
