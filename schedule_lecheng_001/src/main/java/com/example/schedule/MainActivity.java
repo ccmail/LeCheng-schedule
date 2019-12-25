@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,9 +27,9 @@ import com.example.schedule.serviceImpl.CourseServiceImpl;
 import java.util.List;
 
 /**
- * 运行逻辑: 1.启动时先加载组件方法,并且查询数据库,查询数据库的时候会用到添加课程卡片的方法
+ * 运行逻辑: 1.启动时先加载组件方法,获取宽度设置布局并且查询数据库,查询数据库的时候会用到添加课程卡片的方法
  * 2.添加卡片的方法会从数据库中读取课程信息,进行循环添加
- * 3.点击添加的图片按钮时,弹出输入课程信息的dialog,点击dialog 的确定按钮时,获取输入的信息,并从course类中走一遍插入数据库中
+ * 3.点击添加课程时,弹出输入课程信息的dialog,点击dialog 的确定按钮时,获取输入的信息,并从course类中走一遍插入数据库中
  * 4.第3步插入数据库之后,立刻重新执行数据库的查询,并且插入卡片
  * 备注:添加卡片的方法在查询数据库的方法中被调用
  */
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private Spinner week_spinner;
     private ArrayAdapter week_array;
     private GridLayout gridLayout;
-    private ImageButton add_imageButton;
     private int width;
     private int week = 1;
 
@@ -147,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         //测试使用的提示信息
-        Toast toast = Toast.makeText(MainActivity.this, "gridLayout绑定成功", Toast.LENGTH_SHORT);
-        toast.show();
+       /* Toast toast = Toast.makeText(MainActivity.this, "gridLayout绑定成功", Toast.LENGTH_SHORT);
+        toast.show();*/
     }
 
 
@@ -193,8 +191,8 @@ public class MainActivity extends AppCompatActivity {
         int height = metrics.heightPixels;
         //测试时的使用提示
         String a_width = String.valueOf(width);
-        Toast toast = Toast.makeText(MainActivity.this, a_width, Toast.LENGTH_SHORT);
-        toast.show();
+        /*Toast toast = Toast.makeText(MainActivity.this, a_width, Toast.LENGTH_SHORT);
+        toast.show();*/
         this.width = width;
     }
 
